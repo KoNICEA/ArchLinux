@@ -9,8 +9,6 @@ then
     LSD=$(lsblk -o NAME,SIZE,MODEL)
     echo -e "\033[0;33m$LSD\033[0m"
     echo -n "Select Disk To Install Arch >> "
-    read DISK
-    echo -n "Select Disk >> "
     read SDK
     dd if=/dev/zero of=/dev/$SDK bs=512 count=1
     echo -n "Size in GB of Root Partition >> "
@@ -35,12 +33,13 @@ then
     echo " -- GenFstab --"
     echo "----------------"    
     genfstab -U /mnt >> /mnt/etc/fstab
-    arch-chroot /mnt
 
+
+cat <<EOF > /mnt/tmp/complete.sh
     echo "----------------------------"
     echo " -- Install BasePackages --"
     echo "----------------------------"
-    pacman -S grub efibootmgr ne
+    pacman -S grub efibootmgr
 
     echo "-----------------------------"
     echo " -- ArchLinux BaseConfigs --"
@@ -67,21 +66,29 @@ then
 
     echo "----------------------------"
     echo " -- Create User and Home --"
-    echo "----------------------------"    
-    useradd --create-home ciphered
-    passwd ciphered
-    usermod --append --groups wheel ciphered
+    echo "----------------------------"
+    echo -n "UserName of New User >> "    
+    read NUSR
+    useradd --create-home $NUSR
+    passwd $NUSR
+    usermod --append --groups wheel $NUSR
     nano /etc/sudoers
 
     echo "---------------------------"
     echo " -- Complete.Sh in Home --"
     echo "---------------------------"  
-    echo "pacman -Syu xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g" >> /home/ciphered/complete.sh
-    echo "pacman -S feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/ciphered/complete.sh
-    echo "pacman -S networkmanager rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/ciphered/complete.sh
-    echo "pacman -S sudo pacman -S ttf-hanazono ttf-sazanami" >> /home/ciphered/complete.sh
-    echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/ciphered/complete.sh
-    chmod +x /home/ciphered/complete.sh
+    echo "pacman -Syu xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g" >> /home/$NUSR/complete.sh
+    echo "pacman -S feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$NUSR/complete.sh
+    echo "pacman -S networkmanager rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$NUSR/complete.sh
+    echo "pacman -S sudo pacman -S ttf-hanazono ttf-sazanami" >> /home/$NUSR/complete.sh
+    echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/$NUSR/complete.sh
+    chmod +x /home/$NUSR/complete.sh
+
+exit # to leave the chroot
+EOF
+
+    arch-chroot /mnt /tmp/complete.sh
+
 else
     echo "Reboot in UEFI..."
 fi
