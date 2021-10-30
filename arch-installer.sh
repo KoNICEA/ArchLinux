@@ -26,19 +26,33 @@ cat <<EOF > /mnt/root/complete.sh
     ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
     hwclock --systohc
     mv /etc/locale.gen /etc/locale.gen.all
-    echo it_IT.UTF-8 UTF-8 > /etc.locale.gen
+    echo it_IT.UTF-8 UTF-8 > /etc/locale.gen
     locale-gen
     echo LANG=it_IT.UTF-8 > /etc/locale.conf
     echo KEYMAP=it > /etc/vconsole.conf
     echo -n "HostName >> "
     read HSTN
     echo $V2 > /etc/hostname
-    nano /etc/hosts
+
+    echo "--------------------------"
+    echo " -- Configs /Etc/Hosts --"
+    echo "--------------------------"
+    sleep 1  
+    echo >> /etc/host
+    echo 127.0.0.1    localhost >> /etc/hosts
+    echo ::1          localhost >> /etc/hosts
+    echo >> /etc/hosts
+    echo 127.0.0.1    $V2 >> /etc/hosts
 
     echo "-------------------------------"
     echo " -- Insert Password of Root --"
     echo "-------------------------------"
     passwd
+
+    echo "----------------------"
+    echo " -- Grub Configure --"
+    echo "----------------------"
+    sleep 2
     grub-install --target=x86_64-efi --bootloader-id=UEFI-CPH-LNX --efi-directory=/boot/efi
     grub-mkconfig -o /boot/grub/grub.cfg
     mkinitcpio -P
