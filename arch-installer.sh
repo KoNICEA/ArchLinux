@@ -11,6 +11,7 @@ sleep 3
 
 V1='$NUSR'
 V2='$HSTN'
+V3='NBTL'
 cat <<EOF > /mnt/root/complete.sh
     echo "----------------------------"
     echo " -- Install BasePackages --"
@@ -53,7 +54,9 @@ cat <<EOF > /mnt/root/complete.sh
     echo " -- Grub Configure --"
     echo "----------------------"
     sleep 2
-    grub-install --target=x86_64-efi --bootloader-id=UEFI-CPH-LNX --efi-directory=/boot/efi
+    echo -n "Name Of BootLoader | UEFI- [E.G. CPH-LNX] >> "
+    read NBTL
+    grub-install --target=x86_64-efi --bootloader-id=UEFI-$V3 --efi-directory=/boot/efi
     grub-mkconfig -o /boot/grub/grub.cfg
     mkinitcpio -P
 
@@ -66,7 +69,7 @@ cat <<EOF > /mnt/root/complete.sh
     useradd --create-home $V1
     passwd $V1
     usermod --append --groups wheel $V1
-    nano /etc/sudoers
+    echo $V1    ALL=(ALL:ALL) ALL >> /etc/sudoers
 
     echo "---------------------------"
     echo " -- Complete.Sh in Home --"
@@ -78,6 +81,9 @@ cat <<EOF > /mnt/root/complete.sh
     echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/$V1/complete.sh
     chmod +x /home/$V1/complete.sh
 EOF
+
+    sleep 1
+    chmod +x /mnt/root/complete.sh
 }
 
 # ---------------
