@@ -17,7 +17,7 @@ cat <<EOF > /mnt/root/complete.sh
     echo " -- Install BasePackages --"
     echo "----------------------------"
     sleep 3
-    pacman -S --needed grub efibootmgr sudo
+    pacman -S --needed grub efibootmgr sudo networkmanager
 
     echo "-----------------------------"
     echo " -- ArchLinux BaseConfigs --"
@@ -71,13 +71,19 @@ cat <<EOF > /mnt/root/complete.sh
     usermod --append --groups wheel $V1
     echo $V1    ALL=(ALL:ALL) ALL >> /etc/sudoers
 
+    echo "-----------------------"
+    echo " -- Enable Services --"
+    echo "-----------------------"
+    sleep 2
+    systemctl enable NetworkManager.service
+
     echo "---------------------------"
     echo " -- Complete.Sh in Home --"
     echo "---------------------------"  
     echo "pacman -Syu --needed xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g " >> /home/$V1/complete.sh
-    echo "pacman -S " >> /home/$V1/complete.sh
-    echo "pacman -S networkmanager rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
-    echo "pacman -S sudo pacman -S ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
+    echo "pacman -S --needed feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
+    echo "pacman -S --needed rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
+    echo "pacman -S --needed ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
     echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/$V1/complete.sh
     chmod +x /home/$V1/complete.sh
 EOF
@@ -127,6 +133,12 @@ then
     genfstab -U /mnt >> /mnt/etc/fstab
     gen-arch-chroot
     arch-chroot /mnt /root/complete.sh
+
+    echo "---------------------------------------------"
+    echo " -- Completed! Now Reboot to Apply Modify --"
+    echo "---------------------------------------------"
+    read IEND
+    exit
 
 else
     echo "Reboot in UEFI..."
