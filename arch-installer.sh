@@ -69,7 +69,7 @@ cat <<EOF > /mnt/root/complete.sh
     useradd --create-home $V1
     passwd $V1
     usermod --append --groups wheel $V1
-    echo $V1    ALL=(ALL:ALL) ALL >> /etc/sudoers
+    echo "$V1    ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
     echo "-----------------------"
     echo " -- Enable Services --"
@@ -80,10 +80,11 @@ cat <<EOF > /mnt/root/complete.sh
     echo "---------------------------"
     echo " -- Complete.Sh in Home --"
     echo "---------------------------"  
-    echo "pacman -Syu --needed xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g " >> /home/$V1/complete.sh
-    echo "pacman -S --needed feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
-    echo "pacman -S --needed rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
-    echo "pacman -S --needed ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
+    echo "sudo pacman -Syu --needed xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
     echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/$V1/complete.sh
     chmod +x /home/$V1/complete.sh
 EOF
@@ -112,19 +113,27 @@ then
     echo -n "Size in GB of Swap Partition >> "
     read SSP
     echo -e "g\nn\n\n\n+1G\nn\n\n\n+"$SRP"G\nn\n\n\n+"$SSP"G\nt\n1\n1\nt\n2\n20\nt\n3\n19\nw" | fdisk /dev/$SDK
-    mkfs.vfat -F32 "/dev/"$SDK"1"
-    mkfs.ext4 "/dev/"$SDK"2"
-    mkswap "/dev/"$SDK"3"
+
+    TRMS=""
+    LCHR=${SDK: -1}
+    REGX='^[0-9]+$'
+    if [[ $LCHR =~ $REGX ]] ; then
+       TRMS="p"
+    fi
+
+    mkfs.vfat -F32 "/dev/"$SDK$TRMS"1"
+    mkfs.ext4 "/dev/"$SDK$TRMS"2"
+    mkswap "/dev/"$SDK$TRMS"3"
 
     echo "-------------------------"
     echo " -- Install ArchLinux --"
     echo "-------------------------"
     sleep 3   
-    mount "/dev/$SDK"2 /mnt
+    mount "/dev/"$SDK$TRMS"2" /mnt
     pacstrap /mnt base linux linux-firmware	
     mkdir /mnt/boot/efi
-    mount "/dev/$SDK"1 /mnt/boot/efi
-    swapon "/dev/$SDK"3
+    mount "/dev/"$SDK$TRMS"1" /mnt/boot/efi
+    swapon "/dev/"$SDK$TRMS"3"
 
     echo "----------------"
     echo " -- GenFstab --"
