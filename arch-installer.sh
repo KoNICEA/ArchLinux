@@ -11,7 +11,7 @@ sleep 3
 
 V1='$NUSR'
 V2='$HSTN'
-V3='NBTL'
+V3='$NBTL'
 cat <<EOF > /mnt/root/complete.sh
     echo "----------------------------"
     echo " -- Install BasePackages --"
