@@ -17,7 +17,7 @@ cat <<EOF > /mnt/root/complete.sh
     echo " -- Install BasePackages --"
     echo "----------------------------"
     sleep 3
-    pacman -S --needed grub efibootmgr sudo networkmanager
+    pacman -S --needed --noconfirm grub efibootmgr sudo networkmanager base-devel
 
     echo "-----------------------------"
     echo " -- ArchLinux BaseConfigs --"
@@ -79,13 +79,21 @@ cat <<EOF > /mnt/root/complete.sh
 
     echo "---------------------------"
     echo " -- Complete.Sh in Home --"
-    echo "---------------------------"  
-    echo "sudo pacman -Syu --needed xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed neofetch neovim unzip git htop dmenu chromium firefox xterm ntfs-3g" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed feh python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
+    echo "---------------------------"
+    echo "sudo pacman -Syu" 
+    echo "sudo pacman -S --needed --noconfirm xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm neofetch neovim unzip git htop dmenu feh chromium firefox xterm ntfs-3g" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm libxcb xcb-util xcb-util-wm xcb-util-keysyms" >> /home/$V1/complete.sh
+
+    echo "--------------------------------"
+    echo " -- BspWM And Yay Complete.Sh --"
+    echo "--------------------------------"    
+    echo "git clone https://github.com/baskerville/bspwm.git && git clone https://github.com/baskerville/sxhkd.git && cd bspwm && make && sudo make install && cd ../sxhkd && make && sudo make install" >> /home/$V1/complete.sh
     echo "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si" >> /home/$V1/complete.sh
+
     chmod +x /home/$V1/complete.sh
 EOF
 
@@ -130,7 +138,7 @@ then
     echo "-------------------------"
     sleep 3   
     mount "/dev/"$SDK$TRMS"2" /mnt
-    pacstrap /mnt base linux linux-firmware	
+    pacstrap /mnt base linux linux-firmware
     mkdir /mnt/boot/efi
     mount "/dev/"$SDK$TRMS"1" /mnt/boot/efi
     swapon "/dev/"$SDK$TRMS"3"
@@ -147,6 +155,8 @@ then
     echo " -- Completed! Now Reboot to Apply Modify --"
     echo "---------------------------------------------"
     read IEND
+
+    rm /mnt/root/complete.sh
     exit
 
 else
