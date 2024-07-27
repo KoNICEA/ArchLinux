@@ -81,10 +81,11 @@ cat <<EOF > /mnt/root/complete.sh
     echo " -- Complete.Sh in Home --"
     echo "---------------------------"
     echo "sudo pacman -Syu" 
-    echo "sudo pacman -S --needed --noconfirm xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
+    #echo "sudo pacman -S --needed --noconfirm xorg-server nvidia nvidia-utils nvidia-settings xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm wayland xorg-xwayland xorg-xlsclients qt5-wayland glfw-wayland mesa xf86-video-intel xorg-server xorg-xinit xorg-xrandr xorg-xsetroot" >> /home/$V1/complete.sh
     echo "sudo pacman -S --needed --noconfirm neofetch neovim unzip git htop dmenu feh chromium firefox xterm ntfs-3g" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed --noconfirm python python-pip ruby keepassxc mplayer mpd openssh openvpn" >> /home/$V1/complete.sh
-    echo "sudo pacman -S --needed --noconfirm rp-pppoe wpa_supplicant wireless_tools networkmanager-strongswan nm-connection-editor" >> /home/$V1/complete.sh
+    # echo "sudo pacman -S --needed --noconfirm python python-pip ruby keepassxc mplayer mpd openssh openvpn networkmanager-strongswan" >> /home/$V1/complete.sh
+    echo "sudo pacman -S --needed --noconfirm rp-pppoe wpa_supplicant wireless_tools nm-connection-editor" >> /home/$V1/complete.sh
     echo "sudo pacman -S --needed --noconfirm ttf-hanazono ttf-sazanami" >> /home/$V1/complete.sh
     echo "sudo pacman -S --needed --noconfirm libxcb xcb-util xcb-util-wm xcb-util-keysyms" >> /home/$V1/complete.sh
 
